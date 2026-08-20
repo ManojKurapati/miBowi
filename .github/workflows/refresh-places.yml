@@ -20,13 +20,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Re-scrape OpenStreetMap
-        run: npm run scrape
+      # Must be scrape:all, not scrape. The scraper rewrites places.js from
+      # whatever providers ran, so an Overpass-only refresh would silently
+      # delete every Firecrawl venue from the map.
+      - name: Re-scrape both providers
+        run: npm run scrape:all
         env:
-          # Optional. Add the repository secret to also pull dog-friendly
-          # venues via Firecrawl; without it the scraper runs Overpass only.
-          # Tolerant of how the secret was named — GitHub upper-cases secret names.
-          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY || secrets.FIRECRAWL || secrets.FIRECRAWL_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
 
       - name: Verify the site still passes with the new data
         run: |

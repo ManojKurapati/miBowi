@@ -270,6 +270,48 @@ async function firecrawlScrape(url, key) {
   return (data.json && data.json.venues) || [];
 }
 
+/* ---- geocode result guard ----------------------------------------------
+   Fuzzy geocoders happily return the nearest-sounding business, which on a map
+   means sending someone to the wrong address. Photon offered "Happy Day
+   Discount Centre" for "Happy Bark Day" and "Chuno Deli" for "Barbary Deli".
+   So every candidate must clear a name check before we believe it.
+
+   Scoring is bidirectional (an F1 over matched tokens) so that extra words in
+   the candidate count against it, with a prefix escape hatch for short names
+   that the geocoder legitimately extends: "Kave" -> "Kave Alserkal Avenue".   */
+
+const STOP = new Set(['the','a','an','and','cafe','café','coffee','restaurant','grill','bar',
+  'lounge','dubai','abu','dhabi','uae','llc','br','branch','emirates','dxb','united','arab']);
+
+function nameTokens(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()
+    .split(' ').filter(t => t.length > 1 && !STOP.has(t));
+}
+function normName(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+const nearTok = (a, b) =>
+  a === b || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)));
+
+function overlap(A, B) {
+  return A.length ? A.filter(a => B.some(b => nearTok(a, b))).length / A.length : 0;
+}
+
+const NAME_THRESHOLD = 0.6;
+
+function nameMatches(wanted, got) {
+  const w = normName(wanted), g = normName(got);
+  if (!w || !g) return false;
+  if (w.length >= 4 && g.startsWith(w)) return true;      // "Kave" -> "Kave Alserkal Avenue"
+  const A = nameTokens(wanted), B = nameTokens(got);
+  if (!A.length || !B.length) return false;
+  const f = overlap(A, B), r = overlap(B, A);
+  const f1 = (f + r) ? (2 * f * r) / (f + r) : 0;
+  return f1 >= NAME_THRESHOLD;
+}
+
 /* Nominatim: keyless, but a strict 1 request/second policy. Respect it. */
 async function geocodeOnce(q) {
   const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ae&q=' +
@@ -278,7 +320,26 @@ async function geocodeOnce(q) {
   if (!res.ok) return null;
   const hits = await res.json();
   if (!hits.length) return null;
-  return { lat: parseFloat(hits[0].lat), lon: parseFloat(hits[0].lon) };
+  return { lat: parseFloat(hits[0].lat), lon: parseFloat(hits[0].lon),
+           label: hits[0].display_name, via: 'nominatim' };
+}
+
+/* Photon finds far more UAE businesses than Nominatim, but only because it
+   guesses. Everything it returns goes through nameMatches() before use. */
+async function photonOnce(q) {
+  const url = 'https://photon.komoot.io/api/?limit=3&lat=25.2&lon=55.27&q=' + encodeURIComponent(q);
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
+  if (!res.ok) return null;
+  const body = await res.json();
+  for (const f of body.features || []) {
+    const p = f.properties || {};
+    if (p.countrycode && p.countrycode !== 'AE') continue;
+    const label = [p.name, p.street, p.city].filter(Boolean).join(', ');
+    if (!label) continue;
+    return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0],
+             label: label, name: p.name || label, via: 'photon' };
+  }
+  return null;
 }
 
 /* Business names are patchy in OSM, so widen the query rather than give up:
@@ -292,8 +353,13 @@ async function geocode(name, area, city) {
 
   for (const q of tries) {
     const hit = await geocodeOnce(q);
-    await sleep(1100);                       // Nominatim rate limit
-    if (hit) return hit;
+    await sleep(1100);                                 // Nominatim rate limit
+    if (hit && nameMatches(name, hit.label)) return hit;
+  }
+  for (const q of tries) {
+    const hit = await photonOnce(q);
+    await sleep(400);
+    if (hit && nameMatches(name, hit.name)) return hit;
   }
   return null;
 }
@@ -329,6 +395,7 @@ async function fromFirecrawl() {
         area: clean(v.area), street: '', phone: '', web: '', hours: '',
         dog: 'reported',
         note: clean(v.note),
+        geo: hit.via,
         src: 'firecrawl',
         srcUrl: url
       });
@@ -343,14 +410,36 @@ async function fromFirecrawl() {
 
 /* ------------------------------------------------------------------- main */
 
+/* Sources spell the same venue differently — "Tap House" and "The Tap House",
+   "Reform" and "Reform Social & Grill", "1762 JLT Stripped" and "1762 Stripped".
+   They geocode to the same point, so collapse on the point and treat one name
+   as the same venue when its words are a subset of the other's. Two genuinely
+   different names at one point are kept: a mall can hold two businesses. */
+function venueTokens(s) {
+  return new Set(String(s || '').toLowerCase().replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(Boolean));
+}
+function sameVenue(a, b) {
+  const A = venueTokens(a), B = venueTokens(b);
+  const [small, big] = A.size <= B.size ? [A, B] : [B, A];
+  if (!small.size) return false;
+  for (const t of small) if (!big.has(t)) return false;
+  return true;
+}
+
 function dedupe(rows) {
-  const seen = new Map();
+  const keep = [];
   for (const r of rows) {
-    // Same name within ~150m is the same place.
-    const key = r.name.toLowerCase() + '@' + r.lat.toFixed(3) + ',' + r.lon.toFixed(3);
-    if (!seen.has(key)) seen.set(key, r);
+    const pt = r.lat.toFixed(4) + ',' + r.lon.toFixed(4);
+    const hit = keep.find(k => k.lat.toFixed(4) + ',' + k.lon.toFixed(4) === pt && sameVenue(k.name, r.name));
+    if (!hit) { keep.push(r); continue; }
+    // Same venue: keep the more descriptive name, and do not lose detail.
+    if (r.name.length > hit.name.length) hit.name = r.name;
+    if (!hit.note && r.note) hit.note = r.note;
+    if (!hit.area && r.area) hit.area = r.area;
+    if (!hit.web && r.web) hit.web = r.web;
   }
-  return [...seen.values()];
+  return keep;
 }
 
 (async () => {
