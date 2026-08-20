@@ -952,3 +952,116 @@ main { flex: 1; }
 
 @media (prefers-reduced-motion: reduce) { .intro { display: none; } }
 @media (max-height: 520px) { .intro__stage { height: 84px; } .intro__bar { margin-top: 16px; } }
+
+/* ==========================================================================
+   17. Places map
+   Leaflet is vendored locally in assets/vendor/. These rules pull its default
+   chrome into the MiBoWi system so the map does not look bolted on.
+   ========================================================================== */
+
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+@media (max-width: 940px) { .map-layout { grid-template-columns: 1fr; } }
+
+#map {
+  height: clamp(400px, 62vh, 660px);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--sand);
+  z-index: 1;
+}
+
+/* The OSM raster tiles are light-only; rebalance them for the dark theme
+   rather than shipping a second tile source. */
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.8);
+}
+
+/* --- markers --- */
+
+.pin-wrap { background: none; border: 0; }
+.pin {
+  display: block; width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--pin, var(--clay));
+  border: 2.5px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+  transition: transform .16s var(--ease);
+}
+.pin-wrap:hover .pin { transform: scale(1.35); }
+[data-theme="dark"] .pin { border-color: #1B1816; }
+
+/* --- popup --- */
+
+.leaflet-popup-content-wrapper {
+  background: var(--paper); color: var(--ink);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-3);
+  border: 1px solid var(--line);
+}
+.leaflet-popup-tip { background: var(--paper); border: 1px solid var(--line); }
+.leaflet-popup-content { margin: 14px 16px; font-family: var(--sans); }
+.leaflet-container a.leaflet-popup-close-button { color: var(--ink-3); }
+
+.pop__cat {
+  font-size: .66rem; font-weight: 680; letter-spacing: .11em;
+  text-transform: uppercase; display: block; margin-bottom: 4px;
+}
+.pop__name { font-size: 1rem; font-weight: 650; letter-spacing: -0.015em; display: block; }
+.pop__where { margin: 5px 0 0; font-size: .82rem; color: var(--ink-2); }
+.pop__meta  { margin: 4px 0 0; font-size: .78rem; color: var(--ink-3); }
+.pop__links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+.pop__links a {
+  font-size: .74rem; font-weight: 620; text-decoration: none;
+  padding: 5px 10px; border-radius: var(--r-pill);
+  background: var(--sand); color: var(--ink-2);
+}
+.pop__links a:hover { background: var(--clay); color: #fff; }
+
+/* --- leaflet chrome --- */
+
+.leaflet-bar a {
+  background: var(--paper); color: var(--ink-2);
+  border-bottom-color: var(--line);
+}
+.leaflet-bar a:hover { background: var(--sand); color: var(--ink); }
+.leaflet-container { font-family: var(--sans); background: var(--sand); }
+.leaflet-control-attribution {
+  background: color-mix(in oklab, var(--paper) 88%, transparent) !important;
+  color: var(--ink-3); font-size: .68rem;
+}
+.leaflet-control-attribution a { color: var(--ink-2); }
+
+/* --- side panel --- */
+
+.map-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.place-list {
+  max-height: clamp(280px, 42vh, 420px);
+  overflow-y: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+  scrollbar-width: thin;
+}
+.place {
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; text-align: left;
+  padding: 10px 12px; margin-bottom: 4px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background-color .16s, border-color .16s;
+}
+.place:hover { background: var(--sand); border-color: var(--line); }
+.place__dot { width: 9px; height: 9px; border-radius: 50%; flex: none; display: inline-block; }
+.place__text { min-width: 0; }
+.place__text b { display: block; font-size: .875rem; font-weight: 600; letter-spacing: -0.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.place__text small { display: block; font-size: .755rem; color: var(--ink-3); }
+
+#cat-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+#cat-filters .opt span {
+  padding: 8px 11px; border-radius: var(--r-sm);
+  font-size: .78rem; gap: 7px; flex-direction: row; align-items: center;
+}
+#cat-filters .opt b { font-weight: 600; font-size: .72rem; margin-left: auto; }
+#cat-filters .opt input:checked + span b { color: var(--bone); opacity: .7; }

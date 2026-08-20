@@ -1,0 +1,45 @@
+name: Refresh UAE places data
+
+# The map is only worth having if it does not rot. This re-runs the scraper
+# and commits the result only when something actually changed; the deploy
+# workflow then picks it up and republishes.
+on:
+  schedule:
+    - cron: '0 3 1 * *'      # 03:00 UTC on the 1st of each month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Re-scrape OpenStreetMap
+        run: npm run scrape
+        env:
+          # Optional. Add the repository secret to also pull dog-friendly
+          # venues via Firecrawl; without it the scraper runs Overpass only.
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+
+      - name: Verify the site still passes with the new data
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet -- assets/data/places.js; then
+            echo "No change in the source data — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/places.js
+          git commit -m "data: refresh UAE places from OpenStreetMap"
+          git push

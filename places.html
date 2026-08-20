@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found — MiBoWi</title>
-<meta name="description" content="That page does not exist. Here are the three MiBoWi calculators.">
+<title>Pet-friendly places in the UAE — MiBoWi</title>
+<meta name="description" content="A map of vets, pet shops, groomers, dog parks and dog-friendly spots across the seven emirates, built from open data and refreshed from source.">
 <meta name="theme-color" content="#FAF7F2">
 <script>try{var t=JSON.parse(localStorage.getItem('mibowi.theme')||'null')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600;650&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/leaflet.css">
 <link rel="stylesheet" href="assets/css/mibowi.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='11.5' r='2.6' fill='%23B4522E'/%3E%3Ccircle cx='16.6' cy='9.4' r='2.4' fill='%23B4522E'/%3E%3Ccircle cx='21.6' cy='12.4' r='2.2' fill='%23B4522E'/%3E%3Cpath d='M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z' fill='%23B4522E'/%3E%3C/svg%3E">
 </head>
@@ -47,45 +48,73 @@
 
 <main>
 
-  <section class="section" style="padding-block:clamp(60px,11vw,130px)">
+  <section class="page-head">
     <div class="wrap">
-      <div style="max-width:60ch">
-        <p class="eyebrow">404</p>
-        <h1 style="font-size:clamp(2.2rem,6vw,3.6rem)">This page has wandered off.</h1>
-        <p class="lede measure">Not every stray comes back on its own. The page you were after either never existed or has been moved — here is everything that definitely is here.</p>
+      <p class="eyebrow reveal">Map &middot; United Arab Emirates</p>
+      <h1 class="reveal" style="max-width:15ch">Where to take them in the UAE</h1>
+      <p class="lede reveal measure"><b id="places-total">0</b> vets, pet shops, groomers, dog parks and dog-friendly spots across the seven emirates &mdash; scraped from open data, not hand-typed, so it can be refreshed rather than rotting.</p>
+    </div>
+  </section>
+
+  <section class="section--tight" style="padding-top:0">
+    <div class="wrap">
+
+      <div class="map-layout">
+        <div id="map"></div>
+
+        <aside class="map-panel">
+          <div class="card card--pad-sm">
+            <label class="field" style="margin-bottom:14px">
+              <span class="field__label"><span>Search</span></span>
+              <input class="input" type="search" id="place-search" placeholder="Name, area or emirate" autocomplete="off">
+            </label>
+
+            <label class="field" style="margin-bottom:14px">
+              <span class="field__label"><span>Emirate</span></span>
+              <select class="select" id="emirate-filter"></select>
+            </label>
+
+            <div class="field" style="margin-bottom:12px">
+              <div class="field__label"><span>Categories</span></div>
+              <div id="cat-filters"></div>
+            </div>
+
+            <label class="switch" style="border-bottom:0;padding-bottom:0">
+              <span class="switch__text"><b>Only what I can see</b><small>Filter the list to the map view</small></span>
+              <input type="checkbox" id="viewport-only"><span class="switch__track"></span>
+            </label>
+          </div>
+
+          <div class="card card--pad-sm" style="flex:1">
+            <div class="row-between" style="margin-bottom:12px">
+              <h4 style="margin:0" id="place-count">0 places</h4>
+              <button type="button" class="btn btn--quiet btn--sm" id="reset-filters">Reset</button>
+            </div>
+            <div class="place-list" id="place-list"></div>
+          </div>
+        </aside>
       </div>
 
-      <div class="grid grid-3" style="margin-top:clamp(36px,5vw,54px)">
-        <a class="tool-card" href="readiness.html" style="--tint:var(--clay)">
-          <span class="tool-card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8.4 4.5 4.5 0 0 1 19.5 11c0 5.3-7.5 10-7.5 10Z" stroke-linejoin="round"/><path d="M9.4 11.6h1.4l.9 2.3 1.2-3.6.8 2.1h1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <h3>Should I get a pet at all?</h3>
-          <p class="small muted">The readiness check — 21 questions across time, money, housing and motive.</p>
-          <span class="tool-card__meta"><span>4 minutes</span><span class="tool-card__go">Begin <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-        </a>
-        <a class="tool-card" href="cost.html" style="--tint:var(--moss)">
-          <span class="tool-card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M7.5 14.5h3" stroke-linecap="round"/></svg>
-          </span>
-          <h3>What will it really cost?</h3>
-          <p class="small muted">Nineteen species costed from the day you get them to the day you lose them.</p>
-          <span class="tool-card__meta"><span>2 minutes</span><span class="tool-card__go">Open <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-        </a>
-        <a class="tool-card" href="match.html" style="--tint:var(--gold)">
-          <span class="tool-card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21" stroke-linecap="round"/><path d="M8 10.5h5M10.5 8v5" stroke-linecap="round"/></svg>
-          </span>
-          <h3>Which one actually fits?</h3>
-          <p class="small muted">Sixty-nine species and breeds scored against your life on fifteen axes.</p>
-          <span class="tool-card__meta"><span>3 minutes</span><span class="tool-card__go">Match <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-        </a>
+      <div class="grid grid-2" style="margin-top:22px">
+        <div class="card">
+          <h4 style="margin-bottom:8px">Where this data comes from</h4>
+          <p class="small muted">Every pin is scraped from <b>OpenStreetMap</b> by <code style="font-size:.85em">scripts/scrape-places.js</code> and committed as a static file &mdash; nothing is scraped in your browser, and there is no server in the loop. Each pin links back to the exact OSM record it came from, so you can check it or correct it at source.</p>
+          <p class="small muted" style="margin-top:12px">Last refreshed <b id="places-generated">&mdash;</b>. Re-run <code style="font-size:.85em">npm run scrape</code> to pull the latest.</p>
+          <p class="tiny muted" style="margin-top:12px">Emirate labels are assigned by nearest population centre. UAE emirate borders have enclaves that this approximation will occasionally get wrong.</p>
+        </div>
+
+        <div class="card" style="background:var(--warn-soft);border-color:transparent">
+          <h4 style="margin-bottom:8px;color:var(--warn)">What is thin, and why</h4>
+          <p class="small" style="color:var(--ink-2)">OpenStreetMap covers UAE pet <em>services</em> well but barely tags dog-friendly <em>venues</em>: at the last run, exactly <b>six</b> cafes, parks or beaches in the whole country carried a <code style="font-size:.85em">dog=yes</code> tag. So this map is strong on vets and pet shops and weak on brunch.</p>
+          <p class="small" style="color:var(--ink-2);margin-top:12px">Closing that gap needs a different source, which is why the scraper ships with a second provider. See <a href="method.html#places">the method note</a>.</p>
+        </div>
       </div>
 
-      <div class="row" style="margin-top:34px">
-        <a class="btn btn--dark" href="index.html">Back to the homepage</a>
-        <a class="btn btn--quiet" href="method.html">Method &amp; sources</a>
+      <div class="note" style="margin-top:22px">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.2v4.4M10 6.6v.1" stroke-linecap="round"/></svg>
+        <span><b>Ring ahead.</b> Pet policies change without notice and open data lags reality. Treat this as a shortlist to phone, not a guarantee of welcome &mdash; particularly for anywhere serving food.</span>
       </div>
+
     </div>
   </section>
 
@@ -133,5 +162,8 @@
 </footer>
 
 <script src="assets/js/core.js"></script>
+<script src="assets/vendor/leaflet.js"></script>
+<script src="assets/data/places.js"></script>
+<script src="assets/js/places.js"></script>
 </body>
 </html>

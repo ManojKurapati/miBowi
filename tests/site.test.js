@@ -414,11 +414,71 @@ async function testIntro() {
   ok(hold + 0.7 <= 6, 'the whole curtain stays under six seconds', (hold + 0.7).toFixed(2) + 's');
 }
 
+async function testPlaces() {
+  console.log('\nUAE places map');
+  const { w, d, jsErrors } = await load('places.html');
+  ok(jsErrors.length === 0, 'no JS errors', jsErrors.join(' | '));
+
+  const DATA = w.MIBOWI_PLACES;
+  ok(!!DATA && Array.isArray(DATA.places), 'dataset loaded');
+  ok(DATA.places.length >= 100, 'a useful number of places', DATA.places.length);
+  ok(/^\d{4}-\d{2}-\d{2}$/.test(DATA.generated), 'dataset is date-stamped', DATA.generated);
+  ok(/OpenStreetMap/.test(DATA.attribution), 'ODbL attribution is carried in the data');
+
+  // Every record must be renderable and traceable
+  const bad = DATA.places.filter(p =>
+    !p.id || !p.name || !p.cat || !DATA.categories[p.cat] ||
+    typeof p.lat !== 'number' || typeof p.lon !== 'number' || !p.srcUrl);
+  ok(bad.length === 0, 'every record has id, name, known category, coords and a source', bad.slice(0,3).map(b=>b.id||b.name).join(', '));
+
+  // Coordinates must actually be inside the UAE, or the map is lying
+  const outside = DATA.places.filter(p => p.lat < 22.5 || p.lat > 26.5 || p.lon < 51 || p.lon > 56.6);
+  ok(outside.length === 0, 'every pin falls inside the UAE bounding box', outside.slice(0,3).map(p=>`${p.name} ${p.lat},${p.lon}`).join(' | '));
+
+  const dupes = DATA.places.map(p => p.id).filter((v,i,a) => a.indexOf(v) !== i);
+  ok(dupes.length === 0, 'no duplicate ids', dupes.slice(0,3).join(','));
+
+  // UI wiring
+  ok(typeof w.L === 'object', 'Leaflet loaded from the vendored copy');
+  ok(d.querySelectorAll('#cat-filters .opt').length === Object.keys(DATA.categories).length, 'a filter per category');
+  ok(d.querySelectorAll('#emirate-filter option').length >= 3, 'emirate filter populated');
+  ok(d.querySelectorAll('#place-list .place').length === DATA.places.length, 'every place listed initially', d.querySelectorAll('#place-list .place').length);
+  ok(d.querySelectorAll('.pin').length === DATA.places.length, 'a marker per place', d.querySelectorAll('.pin').length);
+  ok(d.getElementById('places-total').textContent === String(DATA.counts.total), 'headline count filled in');
+  ok(d.getElementById('places-generated').textContent === DATA.generated, 'refresh date shown to the reader');
+
+  // Filtering narrows both the list and the map
+  const vets = DATA.places.filter(p => p.cat === 'vet').length;
+  d.querySelectorAll('#cat-filters input').forEach(n => { n.checked = n.value === 'vet'; });
+  d.getElementById('cat-filters').dispatchEvent(new w.Event('change', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === vets, 'category filter narrows the list', `${d.querySelectorAll('#place-list .place').length} vs ${vets}`);
+  ok(d.querySelectorAll('.pin').length === vets, 'category filter narrows the map too');
+
+  // Reset restores everything
+  d.getElementById('reset-filters').dispatchEvent(new w.Event('click', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === DATA.places.length, 'reset restores every place');
+
+  // Search
+  const q = d.getElementById('place-search');
+  q.value = 'zzzzznotathing';
+  q.dispatchEvent(new w.Event('input', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === 0, 'search with no hits empties the list');
+  ok(/Nothing matches/.test(d.getElementById('place-list').textContent), 'empty state explains itself');
+
+  // The scraper is committed and self-documenting
+  const scraper = fs.readFileSync(path.join(ROOT, 'scripts/scrape-places.js'), 'utf8');
+  ok(/FIRECRAWL_API_KEY/.test(scraper), 'firecrawl provider is wired for when a key exists');
+  ok(/overpass/i.test(scraper), 'overpass provider present');
+  ok(!/[A-Za-z0-9_-]{20,}\s*['"]\s*\)\s*;?\s*\/\/\s*key/i.test(scraper), 'no hard-coded credentials in the scraper');
+}
+
 async function testIntegrity() {
   console.log('\nsite integrity');
-  const pages = ['index.html','readiness.html','cost.html','match.html','method.html'];
+  const pages = ['index.html','readiness.html','cost.html','match.html','method.html','places.html','404.html'];
   const files = new Set(pages.concat(['assets/css/mibowi.css','assets/js/core.js','assets/js/home.js',
-    'assets/js/cost.js','assets/js/readiness.js','assets/js/match.js','assets/data/costs.js','assets/data/pets.js']));
+    'assets/js/cost.js','assets/js/readiness.js','assets/js/match.js','assets/js/intro.js','assets/js/places.js',
+    'assets/data/costs.js','assets/data/pets.js','assets/data/places.js',
+    'assets/vendor/leaflet.js','assets/vendor/leaflet.css']));
   for (const pg of pages) {
     const { d, jsErrors } = await load(pg);
     ok(jsErrors.length === 0, pg + ': clean console', jsErrors.join(' | '));
@@ -437,7 +497,9 @@ async function testIntegrity() {
       .filter(el => !el.closest('label') && !el.getAttribute('aria-label') && !el.id);
     ok(unlabelled.length === 0, pg + ': every control is labelled', unlabelled.length + ' unlabelled');
     // nav marks the current page
-    ok(!!d.querySelector('.nav a[aria-current=page]') || pg === 'index.html', pg + ': nav marks current page');
+    // index (home lives on the logo) and 404 are not nav destinations
+    const navExempt = pg === 'index.html' || pg === '404.html';
+    ok(!!d.querySelector('.nav a[aria-current=page]') || navExempt, pg + ': nav marks current page');
   }
 }
 
@@ -450,6 +512,7 @@ async function testIntegrity() {
   await testMatch();
   await testMethod();
   await testIntro();
+  await testPlaces();
   await testIntegrity();
   console.log('\n' + '─'.repeat(46));
   console.log(fail === 0 ? `ALL ${pass} CHECKS PASSED` : `${pass} passed, ${fail} FAILED`);
