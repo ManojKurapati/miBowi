@@ -38,6 +38,9 @@
 
   function visible() { return ALL.filter(matches); }
 
+  /* Stable index on every record, so markers and list rows always agree. */
+  ALL.forEach(function (p, i) { p.i = i; });
+
   /* ------------------------------------------------------------ map setup */
 
   function icon(p) {
@@ -88,10 +91,12 @@
 
     layer = window.L.layerGroup().addTo(map);
 
-    ALL.forEach(function (p) {
+    /* Keyed by index rather than id: if the data ever carried a duplicate id,
+       keying by it would silently overwrite a marker and lose a pin. */
+    ALL.forEach(function (p, i) {
       var m = window.L.marker([p.lat, p.lon], { icon: icon(p), title: p.name });
       m.bindPopup(popup(p), { closeButton: true, maxWidth: 260 });
-      markers[p.id] = m;
+      markers[i] = m;
     });
 
     map.on('moveend', function () { if (state.viewportOnly) render(); });
@@ -103,7 +108,7 @@
     var rows = visible();
 
     layer.clearLayers();
-    rows.forEach(function (p) { layer.addLayer(markers[p.id]); });
+    rows.forEach(function (p) { layer.addLayer(markers[p.i]); });
 
     var list = document.getElementById('place-list');
     if (!rows.length) {
@@ -112,7 +117,7 @@
     } else {
       list.innerHTML = rows.map(function (p) {
         var cat = CATS[p.cat] || { label: p.cat, tint: 'var(--clay)' };
-        return '<button class="place" type="button" data-id="' + p.id + '">' +
+        return '<button class="place" type="button" data-i="' + p.i + '">' +
           '<span class="place__dot" style="background:' + cat.tint + '"></span>' +
           '<span class="place__text"><b>' + M.esc(p.name) + '</b>' +
           '<small>' + M.esc([cat.label, p.area || p.emirate].filter(Boolean).join(' · ')) + '</small></span>' +
@@ -129,12 +134,11 @@
     });
   }
 
-  function focus(id) {
-    var p = null;
-    ALL.forEach(function (x) { if (x.id === id) p = x; });
+  function focus(i) {
+    var p = ALL[i];
     if (!p) return;
     map.flyTo([p.lat, p.lon], Math.max(map.getZoom(), 14), { duration: 0.7 });
-    var m = markers[p.id];
+    var m = markers[i];
     if (m) setTimeout(function () { m.openPopup(); }, 720);
   }
 
@@ -169,7 +173,7 @@
 
     document.getElementById('place-list').addEventListener('click', function (e) {
       var btn = e.target.closest('.place');
-      if (btn) focus(btn.getAttribute('data-id'));
+      if (btn) focus(parseInt(btn.getAttribute('data-i'), 10));
     });
 
     document.getElementById('reset-filters').addEventListener('click', function () {

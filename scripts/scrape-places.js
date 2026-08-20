@@ -452,6 +452,17 @@ function dedupe(rows) {
   rows = dedupe(rows).sort((a, b) =>
     a.emirate.localeCompare(b.emirate) || a.name.localeCompare(b.name));
 
+  /* Ids must be unique across the whole file: the site keys records by id, and
+     two branches of the same chain legitimately share a name. Deterministic,
+     because the sort above is stable. */
+  const usedIds = new Set();
+  for (const r of rows) {
+    let id = r.id, n = 2;
+    while (usedIds.has(id)) id = r.id + '-' + (n++);
+    r.id = id;
+    usedIds.add(id);
+  }
+
   const byCat = {}, byEmirate = {};
   rows.forEach(r => {
     byCat[r.cat] = (byCat[r.cat] || 0) + 1;
