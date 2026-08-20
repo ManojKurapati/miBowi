@@ -33,6 +33,27 @@ const path = require('path');
 const OUT = path.resolve(__dirname, '..', 'assets', 'data', 'places.js');
 const UA = 'MiBoWi/1.0 (pet information space; https://manojkurapati.github.io/miBowi/)';
 
+/* Node does not read .env on its own, and we would rather not add a dependency
+   for six lines. Values already in the environment (CI secrets) always win. */
+function loadEnv() {
+  const file = path.resolve(__dirname, '..', '.env');
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);
+    if (!m) continue;
+    const key = m[1];
+    let val = m[2].trim().replace(/^["']|["']$/g, '');
+    if (!val) continue;
+    if (!process.env[key]) process.env[key] = val;
+    // Accept the obvious spellings rather than making anyone rename a variable.
+    if (/^(firecrawl|firecrawl_key|firecrawl_api_key|fc_api_key)$/i.test(key) &&
+        !process.env.FIRECRAWL_API_KEY) {
+      process.env.FIRECRAWL_API_KEY = val;
+    }
+  }
+}
+loadEnv();
+
 const argv = process.argv.slice(2);
 const arg = (k, d) => { const i = argv.indexOf('--' + k); return i >= 0 ? (argv[i + 1] || true) : d; };
 const DRY = argv.includes('--dry-run');
@@ -196,9 +217,16 @@ async function fromOverpass() {
    FIRECRAWL_API_KEY. Each extracted venue is geocoded through Nominatim and
    keeps the URL it came from, so every claim on the map is traceable.        */
 
+/* Verified listing pages. Each extracted venue keeps the URL it came from, so
+   every claim on the map is traceable back to whoever published it. */
 const SOURCES = [
-  'https://www.timeoutdubai.com/things-to-do/dog-friendly-cafes-restaurants-dubai',
-  'https://www.timeoutabudhabi.com/things-to-do/pet-friendly-cafes-abu-dhabi'
+  'https://www.timeoutdubai.com/moving-to-dubai/dog-friendly-cafes-and-pubs-in-dubai',
+  'https://whatson.ae/2026/04/best-pet-friendly-restaurants-cafes-in-dubai/',
+  'https://www.daidubai.com/directory-dog-friendly-places',
+  'https://noblevetclinic.com/blog/top-dog-friendly-restaurants-cafes-in-dubai',
+  'https://www.daidubai.com/restaurants-auh',
+  'https://www.bestbitesuae.com/articles/dog-friendly-dining-in-abu-dhabi',
+  'https://www.thenationalnews.com/lifestyle/things-to-do/2026/01/02/pet-friendly-restaurants-and-cafes-in-dubai-and-abu-dhabi/'
 ];
 
 const VENUE_SCHEMA = {
@@ -243,7 +271,7 @@ async function firecrawlScrape(url, key) {
 }
 
 /* Nominatim: keyless, but a strict 1 request/second policy. Respect it. */
-async function geocode(q) {
+async function geocodeOnce(q) {
   const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ae&q=' +
               encodeURIComponent(q);
   const res = await fetch(url, { headers: { 'User-Agent': UA } });
@@ -253,6 +281,23 @@ async function geocode(q) {
   return { lat: parseFloat(hits[0].lat), lon: parseFloat(hits[0].lon) };
 }
 
+/* Business names are patchy in OSM, so widen the query rather than give up:
+   name + area + city, then name + city, then name + UAE. */
+async function geocode(name, area, city) {
+  const tries = [
+    [name, area, city || 'UAE'].filter(Boolean).join(', '),
+    [name, city || 'Dubai'].filter(Boolean).join(', '),
+    [name, 'United Arab Emirates'].join(', ')
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
+  for (const q of tries) {
+    const hit = await geocodeOnce(q);
+    await sleep(1100);                       // Nominatim rate limit
+    if (hit) return hit;
+  }
+  return null;
+}
+
 async function fromFirecrawl() {
   const key = process.env.FIRECRAWL_API_KEY;
   if (!key) {
@@ -260,7 +305,7 @@ async function fromFirecrawl() {
     return [];
   }
   console.log('· Firecrawl — extracting dog-friendly venues');
-  const out = [];
+  const out = [], ungeocoded = [];
   for (const url of SOURCES) {
     let venues = [];
     try {
@@ -273,9 +318,8 @@ async function fromFirecrawl() {
     for (const v of venues) {
       const name = clean(v.name);
       if (!name) continue;
-      const hit = await geocode([name, clean(v.area), clean(v.city) || 'UAE'].filter(Boolean).join(', '));
-      await sleep(1100);                       // Nominatim rate limit
-      if (!hit) { console.warn(`    could not geocode "${name}" — dropped`); continue; }
+      const hit = await geocode(name, clean(v.area), clean(v.city));
+      if (!hit) { ungeocoded.push(name); continue; }
       out.push({
         id: 'fc-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 48),
         name,
@@ -290,7 +334,10 @@ async function fromFirecrawl() {
       });
     }
   }
-  console.log(`  ${out.length} geocoded venues`);
+  console.log(`  ${out.length} geocoded venues` +
+    (ungeocoded.length ? `, ${ungeocoded.length} dropped (no coordinates found)` : ''));
+  if (ungeocoded.length) console.log('    dropped: ' + ungeocoded.slice(0, 8).join(', ') +
+    (ungeocoded.length > 8 ? ` … +${ungeocoded.length - 8}` : ''));
   return out;
 }
 

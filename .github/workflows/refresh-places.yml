@@ -25,7 +25,8 @@ jobs:
         env:
           # Optional. Add the repository secret to also pull dog-friendly
           # venues via Firecrawl; without it the scraper runs Overpass only.
-          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          # Tolerant of how the secret was named — GitHub upper-cases secret names.
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY || secrets.FIRECRAWL || secrets.FIRECRAWL_KEY }}
 
       - name: Verify the site still passes with the new data
         run: |
