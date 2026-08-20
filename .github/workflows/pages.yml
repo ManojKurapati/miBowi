@@ -26,7 +26,7 @@ jobs:
           node-version: '20'
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
-      - name: Run the 158-check suite
+      - name: Run the test suite
         run: npm test
 
   deploy:

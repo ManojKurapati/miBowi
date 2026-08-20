@@ -33,6 +33,22 @@ jobs:
           npm install --no-audit --no-fund
           npm test
 
+      # Extraction is not deterministic: sources time out and retry, and a bad
+      # run can return far fewer venues than the last one. Without this guard a
+      # flaky scrape would quietly commit a gutted map and redeploy it.
+      - name: Refuse a suspiciously small dataset
+        run: |
+          NEW=$(node -e "global.window={};require('./assets/data/places.js');console.log(window.MIBOWI_PLACES.places.length)")
+          git stash -q --include-untracked -- assets/data/places.js || true
+          OLD=$(node -e "global.window={};require('./assets/data/places.js');console.log(window.MIBOWI_PLACES.places.length)")
+          git stash pop -q || true
+          echo "previous: $OLD   new: $NEW"
+          MIN=$(( OLD * 80 / 100 ))
+          if [ "$NEW" -lt "$MIN" ]; then
+            echo "::error::Refusing to commit: $NEW places is under 80% of the previous $OLD. Probably a flaky scrape — re-run the workflow."
+            exit 1
+          fi
+
       - name: Commit if anything changed
         run: |
           if git diff --quiet -- assets/data/places.js; then
