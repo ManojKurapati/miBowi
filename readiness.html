@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Should I get a pet at all? — MiBoWi readiness check</title>
+<meta name="description" content="A 21-question readiness assessment across time, money, housing, life stability, backup and motivation. Honest about the answers that are blockers rather than weak spots.">
+<meta name="theme-color" content="#FAF7F2">
+<script>try{var t=JSON.parse(localStorage.getItem('mibowi.theme')||'null')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600;650&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/mibowi.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='11.5' r='2.6' fill='%23B4522E'/%3E%3Ccircle cx='16.6' cy='9.4' r='2.4' fill='%23B4522E'/%3E%3Ccircle cx='21.6' cy='12.4' r='2.2' fill='%23B4522E'/%3E%3Cpath d='M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z' fill='%23B4522E'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+        <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/>
+        <circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+        <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+        <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+      </svg>
+      <span class="brand__name">Mi<em>Bo</em>Wi</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="readiness.html">Should I?</a>
+      <a href="cost.html">What it costs</a>
+      <a href="match.html">Which one</a>
+      <a href="method.html">Method</a>
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch colour theme">
+        <svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.6v2M10 16.4v2M18.4 10h-2M3.6 10h-2M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4M15.9 15.9l-1.4-1.4M5.5 5.5L4.1 4.1" stroke-linecap="round"/></svg>
+        <svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9Z" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page-head">
+    <div class="wrap">
+      <p class="eyebrow reveal">Calculator one of three</p>
+      <h1 class="reveal" style="max-width:16ch">Should you get a pet at all?</h1>
+      <p class="lede reveal measure">Twenty-one questions about your week, your home, your money and your reasons. Answer them the way things actually are, not the way you intend them to be — the tool is only worth anything if you are.</p>
+    </div>
+  </section>
+
+  <section class="section--tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="tool-layout">
+
+        <div>
+          <form id="readiness" novalidate>
+            <div class="wizard">
+              <div class="progress-rail">
+                <span class="progress-rail__label" data-progress-label>Step 1 / 6</span>
+                <span class="progress-rail__bar"><span class="progress-rail__fill" data-progress></span></span>
+              </div>
+              <div class="card" data-steps></div>
+              <div class="wizard__nav">
+                <button type="button" class="btn btn--ghost" data-back>Back</button>
+                <button type="button" class="btn btn--primary" data-next>Continue</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="result" id="result"></div>
+        </div>
+
+        <aside class="tool-aside">
+          <div class="card card--pad-sm">
+            <h4 style="margin-bottom:10px">Region</h4>
+            <select class="select" data-region-picker></select>
+            <p class="tiny muted" style="margin-top:10px">Money questions are asked in your currency at your local cost of living.</p>
+          </div>
+
+          <div class="card card--sand card--pad-sm">
+            <h4 style="margin-bottom:8px">How it is weighted</h4>
+            <p class="tiny muted" style="margin-bottom:14px">Six dimensions, not one average.</p>
+            <div class="meters">
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Time &amp; attention</span><span class="meter__score">24%</span></div><div class="meter__bar"><div class="meter__fill" style="width:96%;background:var(--clay)"></div></div></div>
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Financial room</span><span class="meter__score">22%</span></div><div class="meter__bar"><div class="meter__fill" style="width:88%;background:var(--clay)"></div></div></div>
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Home &amp; permission</span><span class="meter__score">18%</span></div><div class="meter__bar"><div class="meter__fill" style="width:72%;background:var(--moss)"></div></div></div>
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Life stability</span><span class="meter__score">15%</span></div><div class="meter__bar"><div class="meter__fill" style="width:60%;background:var(--moss)"></div></div></div>
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Support &amp; skill</span><span class="meter__score">11%</span></div><div class="meter__bar"><div class="meter__fill" style="width:44%;background:var(--gold)"></div></div></div>
+              <div class="meter"><div class="meter__top"><span class="meter__name" style="font-size:.8rem">Motivation</span><span class="meter__score">10%</span></div><div class="meter__bar"><div class="meter__fill" style="width:40%;background:var(--gold)"></div></div></div>
+            </div>
+          </div>
+
+          <div class="card card--pad-sm">
+            <h4 style="margin-bottom:8px">Some answers cap the score</h4>
+            <p class="tiny muted">A lease that forbids animals, a housemate who said no, or no way to pay an emergency bill are not weaknesses to be offset by strength elsewhere. Where you pick one, the total is capped and the reason is shown.</p>
+          </div>
+
+          <div class="note">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.2v4.4M10 6.6v.1" stroke-linecap="round"/></svg>
+            <span>Nothing you type leaves this browser. There is no account and no server.</span>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:14px">
+          <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+            <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/><circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+            <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+            <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+          </svg>
+          <span class="brand__name">Mi<em>Bo</em>Wi</span>
+        </a>
+        <p class="small muted" style="max-width:34ch">A pet information space for the decisions that come before the animal.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="readiness.html">Readiness check</a>
+        <a href="cost.html">Cost reality check</a>
+        <a href="match.html">Suitability matcher</a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="method.html">Method &amp; sources</a>
+        <a href="method.html#limits">What this cannot tell you</a>
+        <a href="method.html#privacy">Privacy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Region</h4>
+        <select class="select" data-region-picker style="margin-top:2px;font-size:.85rem"></select>
+        <p class="tiny muted" style="margin-top:10px">Sets currency and local cost of living everywhere on the site.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MiBoWi. Planning estimates, not veterinary or financial advice.</span>
+      <span>Built to be used once, properly.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/js/readiness.js"></script>
+</body>
+</html>

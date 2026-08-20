@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which pet actually fits your life? — MiBoWi matcher</title>
+<meta name="description" content="Sixty-nine species and breeds scored against your hours, home, budget, allergies, children and climate on fifteen weighted axes — with the ruled-out list and the reason for each.">
+<meta name="theme-color" content="#FAF7F2">
+<script>try{var t=JSON.parse(localStorage.getItem('mibowi.theme')||'null')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600;650&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/mibowi.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='11.5' r='2.6' fill='%23B4522E'/%3E%3Ccircle cx='16.6' cy='9.4' r='2.4' fill='%23B4522E'/%3E%3Ccircle cx='21.6' cy='12.4' r='2.2' fill='%23B4522E'/%3E%3Cpath d='M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z' fill='%23B4522E'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+        <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/>
+        <circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+        <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+        <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+      </svg>
+      <span class="brand__name">Mi<em>Bo</em>Wi</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="readiness.html">Should I?</a>
+      <a href="cost.html">What it costs</a>
+      <a href="match.html">Which one</a>
+      <a href="method.html">Method</a>
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch colour theme">
+        <svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.6v2M10 16.4v2M18.4 10h-2M3.6 10h-2M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4M15.9 15.9l-1.4-1.4M5.5 5.5L4.1 4.1" stroke-linecap="round"/></svg>
+        <svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9Z" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page-head">
+    <div class="wrap">
+      <p class="eyebrow reveal">Calculator three of three</p>
+      <h1 class="reveal" style="max-width:17ch">Which species or breed actually fits?</h1>
+      <p class="lede reveal measure">Sixty-nine candidates — dogs, cats, small mammals, birds, reptiles and a fish tank — scored against your circumstances on fourteen weighted axes. You get the ranked shortlist and, more usefully, the list of what was ruled out and why.</p>
+    </div>
+  </section>
+
+  <section class="section--tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="tool-layout">
+
+        <div>
+          <div class="note" data-prefill-note style="display:none;margin-bottom:18px;background:var(--good-soft);color:var(--good)">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span><b>Filled in from your readiness check.</b> Your hours, home, budget, allergies, experience and commitment horizon have been carried across. Change anything that does not look right.</span>
+          </div>
+
+          <form id="match-form" novalidate>
+            <div class="wizard">
+              <div class="progress-rail">
+                <span class="progress-rail__label" data-progress-label>Step 1 / 4</span>
+                <span class="progress-rail__bar"><span class="progress-rail__fill" data-progress></span></span>
+              </div>
+              <div class="card"><section class="step"><div class="step__head"><span class="step__num">Step 1 of 4 — What you are after</span><h3>What you are after</h3><p class="muted small measure" style="margin:0">The matcher will not talk you into a species you do not want. Narrow the field here, then let the rest of the answers do the ranking.</p></div><div class="field"><div class="field__label"><span>Which of these are you genuinely open to?</span><span class="field__hint">Tick all that apply</span></div><div class="options"><label class="opt"><input type="checkbox" name="groups" value="Dog" checked><span>Dog</span></label><label class="opt"><input type="checkbox" name="groups" value="Cat" checked><span>Cat</span></label><label class="opt"><input type="checkbox" name="groups" value="Small mammal" checked><span>Small mammal</span></label><label class="opt"><input type="checkbox" name="groups" value="Bird" checked><span>Bird</span></label><label class="opt"><input type="checkbox" name="groups" value="Reptile" checked><span>Reptile</span></label><label class="opt"><input type="checkbox" name="groups" value="Aquatic" checked><span>Fish</span></label></div></div><div class="field"><div class="field__label"><span>What do you want from the relationship?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="want" value="companion" checked><span><b>A close companion</b><small>Affectionate, wants to be near you</small></span></label><label class="opt"><input type="radio" name="want" value="active"><span><b>An active partner</b><small>Something to walk, train and do things with</small></span></label><label class="opt"><input type="radio" name="want" value="roommate"><span><b>An independent housemate</b><small>Company without constant demands</small></span></label><label class="opt"><input type="radio" name="want" value="watch"><span><b>Something fascinating to watch</b><small>Interest without needing to handle it</small></span></label></div></div><div class="field"><div class="field__label"><span>How much training do you actually want to do?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="train" value="keen"><span><b>A lot</b><small>Classes, tricks, real work</small></span></label><label class="opt"><input type="radio" name="train" value="some" checked><span><b>The basics</b><small>Manners and house training</small></span></label><label class="opt"><input type="radio" name="train" value="no"><span><b>As little as possible</b></span></label></div></div></section><section class="step"><div class="step__head"><span class="step__num">Step 2 of 4 — Your home and your week</span><h3>Your home and your week</h3><p class="muted small measure" style="margin:0">The two constraints that rule out the most animals, and the two people are most optimistic about.</p></div><div class="field"><div class="field__label"><span>Where do you live?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="home" value="studio"><span><b>Studio or one-bed</b><small>No outdoor space</small></span></label><label class="opt"><input type="radio" name="home" value="flat" checked><span><b>Flat with a balcony</b></span></label><label class="opt"><input type="radio" name="home" value="house"><span><b>House, no garden</b></span></label><label class="opt"><input type="radio" name="home" value="yard"><span><b>House with a garden</b></span></label><label class="opt"><input type="radio" name="home" value="rural"><span><b>Rural, with land</b></span></label></div></div><div class="field"><div class="field__label"><span>How long is your home empty on a weekday?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="alone" value="lt4"><span><b>Under 4 hours</b></span></label><label class="opt"><input type="radio" name="alone" value="4to6"><span><b>4 to 6 hours</b></span></label><label class="opt"><input type="radio" name="alone" value="7to9" checked><span><b>7 to 9 hours</b></span></label><label class="opt"><input type="radio" name="alone" value="10"><span><b>10+ hours or shifts</b></span></label></div></div><div class="field"><div class="field__label"><span>Realistic hands-on time each day?</span></div><p class="field__hint" style="margin:-4px 0 11px">Walking, playing, training, cleaning out. On an ordinary Tuesday.</p><div class="options options--grid"><label class="opt"><input type="radio" name="active" value="lt15"><span><b>Under 15 min</b></span></label><label class="opt"><input type="radio" name="active" value="15to30"><span><b>15 to 30 min</b></span></label><label class="opt"><input type="radio" name="active" value="30to60" checked><span><b>30 to 60 min</b></span></label><label class="opt"><input type="radio" name="active" value="60to90"><span><b>1 to 1.5 hours</b></span></label><label class="opt"><input type="radio" name="active" value="gt90"><span><b>More than 1.5 hours</b></span></label></div></div><div class="field"><div class="field__label"><span>Your climate</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="climate" value="hot"><span><b>Hot</b><small>Long warm season</small></span></label><label class="opt"><input type="radio" name="climate" value="temperate" checked><span><b>Temperate</b></span></label><label class="opt"><input type="radio" name="climate" value="cold"><span><b>Cold</b><small>Long winters</small></span></label></div></div></section><section class="step"><div class="step__head"><span class="step__num">Step 3 of 4 — Who else lives there</span><h3>Who else lives there</h3><p class="muted small measure" style="margin:0">Household composition rules more animals in and out than any other section, and it is the one people most often skip past.</p></div><div class="field"><div class="field__label"><span>Children at home?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="kids" value="none" checked><span><b>None</b></span></label><label class="opt"><input type="radio" name="kids" value="young"><span><b>Under six</b></span></label><label class="opt"><input type="radio" name="kids" value="mid"><span><b>Six to twelve</b></span></label><label class="opt"><input type="radio" name="kids" value="teen"><span><b>Teenagers</b></span></label></div></div><div class="field"><div class="field__label"><span>Animals already in the house?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="pets" value="none" checked><span><b>None</b></span></label><label class="opt"><input type="radio" name="pets" value="dog"><span><b>A dog</b></span></label><label class="opt"><input type="radio" name="pets" value="cat"><span><b>A cat</b></span></label><label class="opt"><input type="radio" name="pets" value="small"><span><b>Small animals or birds</b></span></label></div></div><div class="field"><div class="field__label"><span>Allergies or asthma in the household?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="allergy" value="no" checked><span><b>No</b></span></label><label class="opt"><input type="radio" name="allergy" value="mild"><span><b>Mild</b><small>Manageable with care</small></span></label><label class="opt"><input type="radio" name="allergy" value="severe"><span><b>Significant</b><small>A real reaction</small></span></label></div></div><div class="field"><div class="field__label"><span>Have you been the main carer for an animal before?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="experience" value="first"><span><b>No, this would be my first</b></span></label><label class="opt"><input type="radio" name="experience" value="some" checked><span><b>Some experience</b></span></label><label class="opt"><input type="radio" name="experience" value="exp"><span><b>Yes, plenty</b></span></label></div></div></section><section class="step"><div class="step__head"><span class="step__num">Step 4 of 4 — What you will put up with</span><h3>What you will put up with</h3><p class="muted small measure" style="margin:0">Be strict here. Grooming, shedding and noise are the three things owners most often discover they cannot live with after the animal has arrived.</p></div><div class="field"><div class="field__label"><span>Grooming you are willing to do</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="groom" value="low"><span><b>Minimal</b><small>A brush now and then</small></span></label><label class="opt"><input type="radio" name="groom" value="mid" checked><span><b>Moderate</b><small>Weekly, plus the odd groomer</small></span></label><label class="opt"><input type="radio" name="groom" value="high"><span><b>Whatever it takes</b><small>Daily brushing and a standing appointment</small></span></label></div></div><div class="field"><div class="field__label"><span>Shedding you can tolerate</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="shed" value="low"><span><b>Very little</b></span></label><label class="opt"><input type="radio" name="shed" value="mid" checked><span><b>Some</b></span></label><label class="opt"><input type="radio" name="shed" value="high"><span><b>I do not mind</b></span></label></div></div><div class="field"><div class="field__label"><span>Noise you can tolerate</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="noise" value="low"><span><b>It needs to be quiet</b><small>Thin walls, or I work from home</small></span></label><label class="opt"><input type="radio" name="noise" value="mid" checked><span><b>Some noise is fine</b></span></label><label class="opt"><input type="radio" name="noise" value="high"><span><b>Noise does not bother me</b></span></label></div></div><div class="field"><div class="field__label"><span>Comfortable monthly spend</span><span class="field__hint">Running costs, not the purchase</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="budget" value="b1"><span><b>Under <span data-money="50"></span></b></span></label><label class="opt"><input type="radio" name="budget" value="b2"><span><b><span data-money="50"></span> to <span data-money="100"></span></b></span></label><label class="opt"><input type="radio" name="budget" value="b3" checked><span><b><span data-money="100"></span> to <span data-money="200"></span></b></span></label><label class="opt"><input type="radio" name="budget" value="b4"><span><b><span data-money="200"></span> to <span data-money="400"></span></b></span></label><label class="opt"><input type="radio" name="budget" value="b5"><span><b>More than <span data-money="400"></span></b></span></label></div></div><div class="field"><div class="field__label"><span>How far ahead can you commit?</span></div><div class="options options--grid"><label class="opt"><input type="radio" name="horizon" value="lt3"><span><b>Under 3 years</b></span></label><label class="opt"><input type="radio" name="horizon" value="3to7"><span><b>3 to 7 years</b></span></label><label class="opt"><input type="radio" name="horizon" value="8to15" checked><span><b>8 to 15 years</b></span></label><label class="opt"><input type="radio" name="horizon" value="gt15"><span><b>15 years or more</b></span></label></div></div></section></div>
+              <div class="wizard__nav">
+                <button type="button" class="btn btn--ghost" data-back>Back</button>
+                <button type="button" class="btn btn--primary" data-next>Continue</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="result" id="match-out"></div>
+        </div>
+
+        <aside class="tool-aside">
+          <div class="card card--pad-sm">
+            <h4 style="margin-bottom:10px">Region</h4>
+            <select class="select" data-region-picker></select>
+            <p class="tiny muted" style="margin-top:10px">Sets the currency on the budget question and on every result.</p>
+          </div>
+
+          <div class="card card--sand card--pad-sm">
+            <h4 style="margin-bottom:8px">The fifteen axes</h4>
+            <p class="tiny muted" style="margin-bottom:12px">Weighted, not equal. Time alone and daily time carry the most because they are what most often goes wrong.</p>
+            <div class="pill-row">
+              <span class="pill">Time alone</span><span class="pill">Daily time</span><span class="pill">What you want</span>
+              <span class="pill">Allergies</span><span class="pill">Running cost</span><span class="pill">Space</span>
+              <span class="pill">Commitment</span><span class="pill">Experience</span><span class="pill">Children</span>
+              <span class="pill">Noise</span><span class="pill">Other animals</span><span class="pill">Climate</span>
+              <span class="pill">Grooming</span><span class="pill">Shedding</span><span class="pill">Health burden</span>
+            </div>
+          </div>
+
+          <div class="card card--pad-sm">
+            <h4 style="margin-bottom:8px">A breed is a probability</h4>
+            <p class="tiny muted">Breed predicts tendencies across thousands of animals, not the individual in front of you. Use this to get from sixty-nine options to five, then go and meet several — an adult rescue tells you more in an hour than any pedigree can.</p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:14px">
+          <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+            <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/><circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+            <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+            <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+          </svg>
+          <span class="brand__name">Mi<em>Bo</em>Wi</span>
+        </a>
+        <p class="small muted" style="max-width:34ch">A pet information space for the decisions that come before the animal.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="readiness.html">Readiness check</a>
+        <a href="cost.html">Cost reality check</a>
+        <a href="match.html">Suitability matcher</a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="method.html">Method &amp; sources</a>
+        <a href="method.html#limits">What this cannot tell you</a>
+        <a href="method.html#privacy">Privacy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Region</h4>
+        <select class="select" data-region-picker style="margin-top:2px;font-size:.85rem"></select>
+        <p class="tiny muted" style="margin-top:10px">Sets currency and local cost of living everywhere on the site.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MiBoWi. Planning estimates, not veterinary or financial advice.</span>
+      <span>Built to be used once, properly.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/data/costs.js"></script>
+<script src="assets/data/pets.js"></script>
+<script src="assets/js/match.js"></script>
+</body>
+</html>

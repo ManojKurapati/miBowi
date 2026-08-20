@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiBoWi — decide well before you fall in love</title>
+<meta name="description" content="A pet information space for the part everyone skips: whether to get an animal at all, what it truly costs across a whole life, and which species or breed fits the life you already have.">
+<meta name="theme-color" content="#FAF7F2">
+<script>try{var t=JSON.parse(localStorage.getItem('mibowi.theme')||'null')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>try{var q=/[?&]intro(=|&|$)/.test(location.search),seen=sessionStorage.getItem('mibowi.intro'),rm=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!q&&(seen||rm)){document.documentElement.classList.add('no-intro')}else{sessionStorage.setItem('mibowi.intro','1')}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600;650&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/mibowi.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='11.5' r='2.6' fill='%23B4522E'/%3E%3Ccircle cx='16.6' cy='9.4' r='2.4' fill='%23B4522E'/%3E%3Ccircle cx='21.6' cy='12.4' r='2.2' fill='%23B4522E'/%3E%3Cpath d='M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z' fill='%23B4522E'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- Intro curtain. Clears itself via CSS; assets/js/intro.js only adds skip. -->
+<div class="intro" id="intro">
+  <div class="intro__inner" aria-hidden="true">
+    <svg class="intro__mark" viewBox="0 0 32 32" fill="none">
+      <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+      <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/>
+      <circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+      <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+      <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+    </svg>
+    <p class="intro__word">Mi<em>Bo</em>Wi</p>
+    <p class="intro__tag">A pet information space</p>
+    <div class="intro__bar"><i></i></div>
+  </div>
+
+  <div class="intro__stage" aria-hidden="true">
+    <span class="intro__ground"></span>
+
+    <div class="runner runner--dog">
+      <svg class="runner__svg" viewBox="0 0 150 88" fill="none">
+        <circle class="puff puff-1" cx="42" cy="86" r="4.5" fill="var(--sand-deep)"/>
+        <circle class="puff puff-2" cx="60" cy="86" r="3.5" fill="var(--sand-deep)"/>
+        <g class="runner__body">
+          <path class="tail" d="M36 44c-11-2-17-11-15-22" stroke="#C77A45" stroke-width="8" stroke-linecap="round"/>
+          <rect class="leg leg-a" x="44" y="56" width="9" height="32" rx="4.5" fill="#A9663A"/>
+          <rect class="leg leg-b" x="86" y="56" width="9" height="32" rx="4.5" fill="#A9663A"/>
+          <ellipse cx="64" cy="48" rx="30" ry="16" fill="#C77A45"/>
+          <ellipse cx="92" cy="47" rx="14" ry="15" fill="#C77A45"/>
+          <rect class="leg leg-b" x="56" y="56" width="9" height="32" rx="4.5" fill="#C77A45"/>
+          <rect class="leg leg-a" x="96" y="56" width="9" height="32" rx="4.5" fill="#C77A45"/>
+          <ellipse cx="70" cy="55" rx="20" ry="7.5" fill="#E7B489"/>
+          <path d="M92 44 L107 30" stroke="#C77A45" stroke-width="21" stroke-linecap="round"/>
+          <ellipse cx="113" cy="26" rx="16" ry="14.5" fill="#C77A45"/>
+          <rect x="120" y="24" width="23" height="14" rx="7" fill="#E7B489"/>
+          <ellipse cx="140" cy="27.5" rx="3.8" ry="3.2" fill="#3A2A20"/>
+          <circle cx="116" cy="21" r="2.7" fill="#3A2A20"/>
+          <path class="ear" d="M102 14c-7-1-12 5-12 12s4 11 8 10 5-7 5-12z" fill="#A9663A"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="runner runner--cat">
+      <svg class="runner__svg" viewBox="0 0 132 88" fill="none">
+        <circle class="puff puff-2" cx="38" cy="86" r="3.8" fill="var(--sand-deep)"/>
+        <g class="runner__body">
+          <path class="tail" d="M30 48c-13 3-21-6-19-17 1-6 7-10 11-8" stroke="#5D6E62" stroke-width="5.5" stroke-linecap="round"/>
+          <rect class="leg leg-a" x="38" y="58" width="6.5" height="30" rx="3.2" fill="#47564C"/>
+          <rect class="leg leg-b" x="76" y="58" width="6.5" height="30" rx="3.2" fill="#47564C"/>
+          <ellipse cx="56" cy="52" rx="26" ry="13" fill="#5D6E62"/>
+          <ellipse cx="80" cy="51" rx="11" ry="12.5" fill="#5D6E62"/>
+          <rect class="leg leg-b" x="47" y="58" width="6.5" height="30" rx="3.2" fill="#5D6E62"/>
+          <rect class="leg leg-a" x="84" y="58" width="6.5" height="30" rx="3.2" fill="#5D6E62"/>
+          <ellipse cx="60" cy="58" rx="17" ry="6" fill="#92A296"/>
+          <path d="M80 48 L93 39" stroke="#5D6E62" stroke-width="17" stroke-linecap="round"/>
+          <path d="M89 25 L86 10 L98 20 Z" fill="#5D6E62"/>
+          <path d="M105 19 L115 8 L113 24 Z" fill="#5D6E62"/>
+          <path d="M91 23 L89 15 L96 21 Z" fill="#C98F86"/>
+          <path d="M106 20 L111 14 L110 23 Z" fill="#C98F86"/>
+          <circle cx="100" cy="33" r="13.5" fill="#5D6E62"/>
+          <ellipse cx="109" cy="38" rx="7.5" ry="5.5" fill="#92A296"/>
+          <path d="M109 34.5 L114 34.5 L111.5 38 Z" fill="#26302A"/>
+          <circle cx="102" cy="29" r="2.6" fill="#26302A"/>
+          <circle cx="93" cy="30" r="2.4" fill="#26302A"/>
+          <path d="M114 39h9M114 42l8 3" stroke="#26302A" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <button class="intro__skip" type="button" aria-label="Skip the intro animation">Skip</button>
+</div>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+        <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/>
+        <circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+        <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+        <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+      </svg>
+      <span class="brand__name">Mi<em>Bo</em>Wi</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="readiness.html">Should I?</a>
+      <a href="cost.html">What it costs</a>
+      <a href="match.html">Which one</a>
+      <a href="method.html">Method</a>
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch colour theme">
+        <svg class="sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.6v2M10 16.4v2M18.4 10h-2M3.6 10h-2M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4M15.9 15.9l-1.4-1.4M5.5 5.5L4.1 4.1" stroke-linecap="round"/></svg>
+        <svg class="moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9Z" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ---------------------------------------------------------- HERO -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
+      <div>
+        <p class="eyebrow">A pet information space</p>
+        <h1>Fall in love<br>second.</h1>
+        <p class="lede">Almost every guide starts with the animal. MiBoWi starts with you — because the three questions that decide whether this goes well are all answerable before you meet anything with a face.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary btn--lg" href="readiness.html">Start with: should I at all?
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M2.5 8h11M9.5 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn--ghost btn--lg" href="cost.html">See the real numbers</a>
+        </div>
+        <div class="hero__proof">
+          <div><b>69</b><span>species &amp; breeds scored</span></div>
+          <div><b>19</b><span>costed to end of life</span></div>
+          <div><b>9</b><span>regions &amp; currencies</span></div>
+          <div><b>0</b><span>data leaves your browser</span></div>
+        </div>
+      </div>
+
+      <div class="hero-panel" data-hero-panel>
+        <div class="hero-panel__head">
+          <span class="hero-panel__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="badge badge--clay" data-hero-badge>Lifetime cost</span>
+        </div>
+        <div data-hero-body>
+          <p class="tiny muted" style="margin-bottom:6px">Loading the model…</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- THE TOOLS -->
+  <section class="section section--sand" id="tools">
+    <div class="wrap">
+      <div style="max-width:60ch;margin-bottom:44px">
+        <p class="eyebrow reveal">Three questions, in this order</p>
+        <h2 class="reveal">Most people answer these backwards.</h2>
+        <p class="lede reveal">They pick the breed, then discover the cost, then find out the hours do not work. Reversing that order is the entire idea here.</p>
+      </div>
+
+      <div class="grid grid-3">
+
+        <a class="tool-card reveal" href="readiness.html" style="--tint:var(--clay)">
+          <span class="tool-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8.4 4.5 4.5 0 0 1 19.5 11c0 5.3-7.5 10-7.5 10Z" stroke-linejoin="round"/><path d="M9.4 11.6h1.4l.9 2.3 1.2-3.6.8 2.1h1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <h3>Should I get a pet at all?</h3>
+          <p class="small muted">Twenty-one questions across time, money, housing, life stability, backup and motive. Some answers do not lose you points — they stop the score outright, because a lease that forbids animals is not a weak spot, it is a wall.</p>
+          <span class="tool-card__meta"><span>21 questions · about 4 minutes</span>
+            <span class="tool-card__go">Begin <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </span>
+        </a>
+
+        <a class="tool-card reveal" href="cost.html" style="--tint:var(--moss)">
+          <span class="tool-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18" /><path d="M7.5 14.5h3" stroke-linecap="round"/></svg>
+          </span>
+          <h3>What will it really cost?</h3>
+          <p class="small muted">Nineteen species modelled from the day you get them to the day you lose them, in your currency and at your local cost of living. Setup, food, insurance, boarding, grooming, dental, the emergency you have not budgeted for, and the end.</p>
+          <span class="tool-card__meta"><span>Live · about 2 minutes</span>
+            <span class="tool-card__go">Open <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </span>
+        </a>
+
+        <a class="tool-card reveal" href="match.html" style="--tint:var(--gold)">
+          <span class="tool-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21" stroke-linecap="round"/><path d="M8 10.5h5M10.5 8v5" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Which one actually fits?</h3>
+          <p class="small muted">Sixty-nine species and breeds scored against your hours, home, budget, allergies, children and climate on fifteen weighted axes — including a list of what got ruled out and the single reason why.</p>
+          <span class="tool-card__meta"><span>16 questions · about 3 minutes</span>
+            <span class="tool-card__go">Match <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------- NUMBERS SECTION -->
+  <section class="section">
+    <div class="wrap">
+      <div class="grid grid-2" style="align-items:center;gap:clamp(32px,5vw,64px)">
+        <div>
+          <p class="eyebrow reveal">The gap</p>
+          <h2 class="reveal">The purchase price is the smallest number in the whole decision.</h2>
+          <p class="lede reveal measure">People budget for the adoption fee and the bed. The real figure is that number multiplied by twelve, then by a decade, plus one night at an emergency clinic that costs more than the animal did.</p>
+          <p class="reveal measure muted">Every figure on this site is a planning estimate built from published veterinary and industry cost data, adjusted for where you live. They are not quotes, and your vet will be the final word — but they are close enough that nobody should be surprised.</p>
+          <div class="row reveal" style="margin-top:26px">
+            <a class="btn btn--dark" href="cost.html">Run your own numbers</a>
+            <a class="btn btn--quiet" href="method.html">How we calculate this</a>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="card" data-lifetime-card>
+            <div class="row-between" style="margin-bottom:20px">
+              <h4 style="margin:0">Lifetime cost, adopted &amp; kept modestly</h4>
+              <select class="select" data-region-picker style="width:auto;padding:7px 34px 7px 11px;font-size:.8rem"></select>
+            </div>
+            <div data-lifetime-body><p class="tiny muted">Loading…</p></div>
+            <p class="tiny muted" style="margin-top:18px">One animal, or one pair where the species requires it. Shelter adoption, standard food, light grooming, one week of boarding a year, insured where a real market exists.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- PRINCIPLES -->
+  <section class="section section--sand">
+    <div class="wrap">
+      <div style="max-width:58ch;margin-bottom:44px">
+        <p class="eyebrow reveal">What this place is</p>
+        <h2 class="reveal">An information space, not a shop.</h2>
+        <p class="lede reveal">There is nothing to buy here and nothing to sell you. That changes what we are able to say.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card reveal">
+          <h4>We will talk you out of it</h4>
+          <p class="small muted">A tool that always says yes is a marketing funnel. If your answers say the timing is wrong, the result says so plainly, and then tells you which specific thing to fix and roughly how long it takes.</p>
+        </div>
+        <div class="card reveal">
+          <h4>Welfare is part of the maths</h4>
+          <p class="small muted">Guinea pigs and rats are costed as pairs because keeping them singly is cruel. Flat-faced breeds carry their health burden in the score. The Scottish Fold entry tells you to buy a different cat.</p>
+        </div>
+        <div class="card reveal">
+          <h4>Nothing is uploaded</h4>
+          <p class="small muted">Every calculation runs in your browser. There is no account, no tracking, no newsletter capture and no server storing what you answered. Your results are saved to this device only, so the tools can talk to each other.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- FAQ -->
+  <section class="section">
+    <div class="wrap-narrow">
+      <p class="eyebrow reveal">Reasonable questions</p>
+      <h2 class="reveal" style="margin-bottom:32px">Before you start</h2>
+
+      <details class="faq reveal"><summary>Is this going to tell me not to get a pet?</summary>
+        <div class="faq__body">Only if your own answers say so, and only with reasons attached. Most people score in the middle — ready in principle, with two or three specific things to sort out first. That is a genuinely useful place to land, and far more common than either extreme.</div></details>
+
+      <details class="faq reveal"><summary>Where do the cost figures come from?</summary>
+        <div class="faq__body">They are baselines built from published veterinary pricing, pet-industry spending surveys and insurance claim data, expressed in US dollars and then adjusted twice for your region — once for the exchange rate and once for local cost of living, because a consultation in Mumbai is not a New York consultation at the spot rate. The full method, including what the model deliberately leaves out, is on the <a href="method.html">method page</a>.</div></details>
+
+      <details class="faq reveal"><summary>How reliable is breed matching, really?</summary>
+        <div class="faq__body">A breed is a probability, not a promise. Breed explains a meaningful share of behaviour but nowhere near all of it — individual variation within a breed is wide, and early experience matters enormously. Use the matcher to narrow sixty-nine options down to a handful, then go and meet several actual animals. An adult rescue with a known temperament tells you more in an hour than any pedigree does.</div></details>
+
+      <details class="faq reveal"><summary>Why are some animals costed as pairs?</summary>
+        <div class="faq__body">Because for guinea pigs, rats, gerbils, chinchillas, budgies and rabbits, solitary housing causes real suffering, and in several countries it is illegal. Costing them singly would make them look cheaper than they honestly are and would quietly endorse keeping them that way.</div></details>
+
+      <details class="faq reveal"><summary>Can I use this if I already have a pet?</summary>
+        <div class="faq__body">Yes — the cost tool is just as useful for checking whether your current spending is normal or whether you are under-provisioning for the years ahead, and the matcher accounts for animals already in the house when scoring compatibility.</div></details>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- CTA -->
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="card" style="text-align:center;padding:clamp(34px,6vw,64px);background:var(--ink);border-color:var(--ink)">
+        <p class="eyebrow eyebrow--center" style="color:var(--gold)">Start here</p>
+        <h2 style="color:var(--bone);max-width:20ch;margin-inline:auto">Four minutes now, or fifteen years of finding out.</h2>
+        <p class="lede" style="color:var(--ink-4);max-width:52ch;margin:0 auto 30px">Take the readiness check first. Everything else on this site follows from what it tells you.</p>
+        <div class="row" style="justify-content:center">
+          <a class="btn btn--primary btn--lg" href="readiness.html">Take the readiness check</a>
+          <a class="btn btn--quiet btn--lg" href="match.html" style="color:var(--bone)">Skip to matching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:14px">
+          <svg class="brand__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--clay)" opacity=".13"/>
+            <circle cx="11" cy="11.5" r="2.6" fill="var(--clay)"/><circle cx="16.6" cy="9.4" r="2.4" fill="var(--clay)"/>
+            <circle cx="21.6" cy="12.4" r="2.2" fill="var(--clay)"/>
+            <path d="M16 15.4c3.6 0 6.4 2.6 6.4 5.6 0 2.4-1.9 3.9-4.3 3.9-1.2 0-1.6-.5-2.6-.5s-1.4.5-2.6.5c-2.4 0-4.3-1.5-4.3-3.9 0-3 2.8-5.6 6.4-5.6Z" fill="var(--clay)"/>
+          </svg>
+          <span class="brand__name">Mi<em>Bo</em>Wi</span>
+        </a>
+        <p class="small muted" style="max-width:34ch">A pet information space for the decisions that come before the animal.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="readiness.html">Readiness check</a>
+        <a href="cost.html">Cost reality check</a>
+        <a href="match.html">Suitability matcher</a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="method.html">Method &amp; sources</a>
+        <a href="method.html#limits">What this cannot tell you</a>
+        <a href="method.html#privacy">Privacy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Region</h4>
+        <select class="select" data-region-picker style="margin-top:2px;font-size:.85rem"></select>
+        <p class="tiny muted" style="margin-top:10px">Sets currency and local cost of living everywhere on the site.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MiBoWi. Planning estimates, not veterinary or financial advice.</span>
+      <span>Built to be used once, properly.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/intro.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/data/costs.js"></script>
+<script src="assets/js/cost.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>

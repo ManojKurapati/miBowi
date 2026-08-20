@@ -1,0 +1,13 @@
+{
+  "name": "mibowi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A pet information space — readiness, true lifetime cost, and species/breed suitability. Static site, no build step.",
+  "scripts": {
+    "test": "node tests/site.test.js",
+    "start": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "jsdom": "24.1.3"
+  }
+}
