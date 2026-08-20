@@ -470,6 +470,62 @@ async function testPlaces() {
   ok(d.querySelectorAll('#place-list .place').length === 0, 'search with no hits empties the list');
   ok(/Nothing matches/.test(d.getElementById('place-list').textContent), 'empty state explains itself');
 
+  // --- the filter system ---
+  // Reset first: the search test above deliberately leaves a no-hit query in
+  // the box, and these assertions are about filters, not leftover state.
+  d.getElementById('reset-filters').dispatchEvent(new w.Event('click', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === DATA.places.length, 'clean slate before filter tests');
+
+  const withPhone = DATA.places.filter(p => p.phone).length;
+  d.getElementById('need-phone').checked = true;
+  d.getElementById('need-phone').dispatchEvent(new w.Event('change', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === withPhone, 'phone filter narrows the list', `${d.querySelectorAll('#place-list .place').length} vs ${withPhone}`);
+  ok(d.querySelectorAll('.pin').length === withPhone, 'phone filter narrows the map');
+  ok(/1 filter/.test(d.getElementById('filter-count').textContent), 'active filter badge counts it');
+
+  const withWeb = DATA.places.filter(p => p.phone && p.web).length;
+  d.getElementById('need-web').checked = true;
+  d.getElementById('need-web').dispatchEvent(new w.Event('change', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === withWeb, 'filters combine rather than replace', `${d.querySelectorAll('#place-list .place').length} vs ${withWeb}`);
+  ok(/2 filters/.test(d.getElementById('filter-count').textContent), 'badge counts both');
+
+  d.getElementById('reset-filters').dispatchEvent(new w.Event('click', { bubbles: true }));
+  ok(d.querySelectorAll('#place-list .place').length === DATA.places.length, 'reset clears every filter');
+  ok(d.getElementById('filter-count').style.display === 'none', 'badge hides when nothing is filtered');
+
+  // --- sorting ---
+  const sort = d.getElementById('sort-by');
+  ok(sort.options.length >= 2, 'sort options rendered', sort.options.length);
+  const names = () => Array.from(d.querySelectorAll('#place-list .place b')).map(n => n.textContent);
+  const before = names();
+  const sortedCopy = before.slice().sort((a, b) => a.localeCompare(b));
+  ok(JSON.stringify(before) === JSON.stringify(sortedCopy), 'default sort is alphabetical');
+  sort.value = 'near';
+  sort.dispatchEvent(new w.Event('change', { bubbles: true }));
+  ok(names().length === DATA.places.length, 'sorting by distance keeps every row');
+  ok(JSON.stringify(names()) !== JSON.stringify(before), 'distance sort actually reorders');
+
+  // --- ratings: present honestly, or not at all ---
+  const rated = DATA.places.filter(p => typeof p.rating === 'number').length;
+  if (rated === 0) {
+    ok(d.getElementById('rating-filter') === null, 'no dead rating filter when there are no ratings');
+    ok(/No ratings in this dataset/.test(d.getElementById('rating-field').textContent), 'absence of ratings is explained');
+    ok(!Array.from(sort.options).some(o => o.value === 'rating'), 'no "highest rated" sort without ratings');
+    ok(d.querySelectorAll('.stars').length === 0, 'no star glyphs rendered');
+  } else {
+    ok(d.getElementById('rating-filter').children.length === 4, 'rating filter offers Any/3+/4+/4.5+');
+    ok(Array.from(sort.options).some(o => o.value === 'rating'), 'can sort by rating');
+    ok(d.querySelectorAll('.stars').length === rated, 'a star block per rated place');
+    const bad = DATA.places.filter(p => typeof p.rating === 'number' &&
+      (p.rating < 0 || p.rating > 5 || p.ratingSrc !== 'google' || !p.reviews));
+    ok(bad.length === 0, 'every rating is 0-5, sourced and backed by reviews', bad.slice(0,3).map(b=>b.name).join(', '));
+  }
+
+  // Ratings must never come from scraping — the guard is the point
+  const scr = fs.readFileSync(path.join(ROOT, 'scripts/scrape-places.js'), 'utf8');
+  ok(/GOOGLE_PLACES_API_KEY/.test(scr), 'licensed ratings provider exists');
+  ok(/nameMatches\(row\.name/.test(scr), 'ratings pass the same name guard as geocoding');
+
   // The scraper is committed and self-documenting
   const scraper = fs.readFileSync(path.join(ROOT, 'scripts/scrape-places.js'), 'utf8');
   ok(/FIRECRAWL_API_KEY/.test(scraper), 'firecrawl provider is wired for when a key exists');

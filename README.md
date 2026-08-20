@@ -52,7 +52,8 @@ Two providers, because one source cannot do the job:
 | Provider | Needs a key | Covers | Last run |
 |---|---|---|---|
 | **Overpass** (OpenStreetMap) | no | vets, pet shops, groomers, dog parks, shelters | ~146 records |
-| **Firecrawl** | `FIRECRAWL_API_KEY` | dog-friendly cafés, beaches, hotels | not yet run |
+| **Firecrawl** | `FIRECRAWL_API_KEY` | dog-friendly cafés, beaches, hotels | 49 venues |
+| **Google Places** | `GOOGLE_PLACES_API_KEY` | ratings & review counts (enrich only) | not yet run |
 
 The split exists because OpenStreetMap covers UAE pet *services* well and
 dog-friendly *venues* almost not at all — exactly **six** places in the entire
@@ -60,6 +61,35 @@ country carry a `dog=yes` tag. Firecrawl fills that category by extracting
 structured records from published listings and geocoding them via Nominatim,
 storing the source URL on every record. Nothing is added to the map without a
 traceable source.
+
+### Filters
+
+Category, emirate, free-text search, minimum rating, sort (name / nearest /
+highest rated / most reviewed), and "only places with a phone, a website or
+opening hours". An active-filter badge shows how many are applied; Reset clears
+all of them.
+
+### Ratings
+
+```bash
+npm run scrape:ratings    # needs GOOGLE_PLACES_API_KEY
+```
+
+Ratings come from the **Google Places API or not at all**, and there is
+deliberately no scraped-rating path. Two things were tried and rejected:
+
+- **Google Maps** serves a JavaScript shell — the HTML contains map tiles and no
+  review data — and scraping it would breach their terms regardless.
+- **Directory pages** put a language model in the position of inventing numbers.
+  A test run returned **0.0 stars for a groomer with 38 reviews**, and a 5.0
+  drawn from three. Next to a real business name, the first is defamatory and
+  the second is noise.
+
+The `google` provider only enriches places that already exist — it answers "how
+is this rated", never "what is here" — and each candidate passes the same
+name-similarity guard used for geocoding, so a rating cannot land on the wrong
+business. Until a key is present the map shows no stars and the rating controls
+are hidden rather than left dead.
 
 `.github/workflows/refresh-places.yml` re-runs the scraper monthly (and on
 demand), runs the test suite against the new data, and commits only if something
@@ -135,7 +165,7 @@ scripts/
   js/match.js        the 15-axis scorer and blocker rules
   data/costs.js      19 species economics + the "what people forget" bills
   data/pets.js       69 candidates × 21 scored attributes + written profiles
-tests/site.test.js   197 headless checks
+tests/site.test.js   217 headless checks
 ```
 
 Scripts are classic (non-module) on purpose, so the site works from `file://`
@@ -143,7 +173,7 @@ with no server and no CORS problems.
 
 ## Tests
 
-197 headless checks — every page loads clean, the calculators produce sane and
+217 headless checks — every page loads clean, the calculators produce sane and
 correctly-ordered results across a range of profiles, the cost model is
 monotonic, hard blockers actually block, the intro curtain plays once and always
 clears, every map pin has coordinates inside the UAE and a traceable source,

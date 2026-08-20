@@ -143,6 +143,19 @@
             <p class="measure">We will not fill the gap by writing a list of businesses from memory and presenting it as researched. Naming a real venue as pet-friendly without a source is a claim about somebody else's business that we cannot stand behind, and the person it inconveniences is the one who drives across town with a dog in the back. Every pin here traces to a source, or it does not ship.</p>
           </div>
 
+          <!-- RATINGS -->
+          <div class="card" id="ratings">
+            <p class="eyebrow">Ratings</p>
+            <h2 style="font-size:clamp(1.5rem,3vw,2rem)">Why the stars are either licensed or absent</h2>
+            <p class="measure">A rating is a public claim about a named business, so it comes from a licensed source or it does not appear. There is no scraped-rating path in this project, and that is a decision rather than an oversight.</p>
+            <p class="measure">We tried. Google Maps &mdash; where almost all UAE ratings actually live &mdash; serves a JavaScript shell whose HTML contains map tiles and no review data, and scraping it would breach their terms in any case. Directory pages looked more promising until we read the output: asked to extract a star rating, a language model will return <code>0</code> when it cannot find one. A test run produced <b>0.0 stars for a grooming salon with 38 reviews</b>, and another gave a perfect 5.0 drawn from three. Published on a map next to somebody's business name, the first is defamatory and the second is noise.</p>
+            <p class="measure">So ratings come from the <b>Google Places API</b> or nowhere. The provider is written and waiting in <code>scripts/scrape-places.js</code>; set <code>GOOGLE_PLACES_API_KEY</code> and run <code>npm run scrape:ratings</code> to fill them in against the places already on the map. It never adds a place &mdash; it only answers "how is this one rated" &mdash; and each candidate passes the same name-similarity guard used for geocoding, so a rating cannot be attached to the wrong business.</p>
+            <div class="note" style="margin-top:20px">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.2v4.4M10 6.6v.1" stroke-linecap="round"/></svg>
+              <span>Until that key exists, the map shows no stars and the rating filters are hidden rather than left dead. An empty control implying data we do not have would be its own small lie.</span>
+            </div>
+          </div>
+
           <!-- LIMITS -->
           <div class="card" id="limits" style="background:var(--sand);border-color:transparent">
             <p class="eyebrow">Honesty</p>
@@ -177,6 +190,7 @@
             <a href="#readiness-method" class="small" style="display:block;padding:5px 0;text-decoration:none">The readiness score</a>
             <a href="#matching" class="small" style="display:block;padding:5px 0;text-decoration:none">The matcher</a>
             <a href="#places" class="small" style="display:block;padding:5px 0;text-decoration:none">The UAE map</a>
+            <a href="#ratings" class="small" style="display:block;padding:5px 0;text-decoration:none">Ratings</a>
             <a href="#limits" class="small" style="display:block;padding:5px 0;text-decoration:none">What this cannot tell you</a>
             <a href="#privacy" class="small" style="display:block;padding:5px 0;text-decoration:none">Privacy</a>
           </div>

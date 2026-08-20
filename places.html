@@ -74,20 +74,48 @@
               <select class="select" id="emirate-filter"></select>
             </label>
 
-            <div class="field" style="margin-bottom:12px">
+            <div class="field" style="margin-bottom:14px">
               <div class="field__label"><span>Categories</span></div>
               <div id="cat-filters"></div>
             </div>
 
-            <label class="switch" style="border-bottom:0;padding-bottom:0">
-              <span class="switch__text"><b>Only what I can see</b><small>Filter the list to the map view</small></span>
-              <input type="checkbox" id="viewport-only"><span class="switch__track"></span>
+            <div class="field" style="margin-bottom:14px" id="rating-field">
+              <div class="field__label"><span>Minimum rating</span></div>
+              <div class="options" id="rating-filter"></div>
+            </div>
+
+            <label class="field" style="margin-bottom:10px">
+              <span class="field__label"><span>Sort by</span></span>
+              <select class="select" id="sort-by"></select>
             </label>
+
+            <div class="field" style="margin-bottom:0">
+              <div class="field__label"><span>Show only places</span></div>
+              <label class="switch">
+                <span class="switch__text"><b>With a phone number</b></span>
+                <input type="checkbox" id="need-phone"><span class="switch__track"></span>
+              </label>
+              <label class="switch">
+                <span class="switch__text"><b>With a website</b></span>
+                <input type="checkbox" id="need-web"><span class="switch__track"></span>
+              </label>
+              <label class="switch">
+                <span class="switch__text"><b>With opening hours</b></span>
+                <input type="checkbox" id="need-hours"><span class="switch__track"></span>
+              </label>
+              <label class="switch" style="border-bottom:0;padding-bottom:0">
+                <span class="switch__text"><b>Inside the map view</b><small>Follows the map as you pan</small></span>
+                <input type="checkbox" id="viewport-only"><span class="switch__track"></span>
+              </label>
+            </div>
           </div>
 
           <div class="card card--pad-sm" style="flex:1">
             <div class="row-between" style="margin-bottom:12px">
-              <h4 style="margin:0" id="place-count">0 places</h4>
+              <div class="row" style="gap:8px">
+                <h4 style="margin:0" id="place-count">0 places</h4>
+                <span class="badge badge--clay" id="filter-count" style="display:none"></span>
+              </div>
               <button type="button" class="btn btn--quiet btn--sm" id="reset-filters">Reset</button>
             </div>
             <div class="place-list" id="place-list"></div>

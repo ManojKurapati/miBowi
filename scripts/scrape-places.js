@@ -13,15 +13,28 @@
                 Excellent UAE coverage of vets, pet shops, groomers and dog
                 parks — roughly 150 records.
 
+     google     Optional, needs GOOGLE_PLACES_API_KEY. Adds ratings and review
+                counts. This is the only provider we will take ratings from —
+                see "On ratings" below.
+
      firecrawl  Optional, needs FIRECRAWL_API_KEY. Fills the gap OSM cannot:
                 cafes, beaches and hotels that welcome dogs, which are barely
                 tagged in OSM (6 records nationwide at last run). Extracts
                 structured records from published listings, then geocodes them
                 through Nominatim. Every record keeps its source URL.
 
+   On ratings
+     Ratings are claims about named real businesses, so they come from a
+     licensed API or not at all. Scraping them was tried and rejected:
+     Google Maps serves a JavaScript shell with no ratings in the HTML, and
+     directory pages put an LLM in the position of inventing numbers — a test
+     run returned 0.0 stars for a groomer with 38 reviews, which as a published
+     figure is worse than showing nothing. So there is no scraped-rating path
+     here on purpose.
+
    Usage
      node scripts/scrape-places.js                    # overpass only
-     node scripts/scrape-places.js --provider all     # + firecrawl if keyed
+     node scripts/scrape-places.js --provider all     # + firecrawl and google if keyed
      node scripts/scrape-places.js --dry-run          # print, do not write
    ========================================================================== */
 
@@ -408,6 +421,68 @@ async function fromFirecrawl() {
   return out;
 }
 
+/* ------------------------------------------------------- 3. GOOGLE PLACES
+
+   Enriches records that already exist with a rating and review count. It never
+   adds a place: this provider answers "how is this rated", not "what is here".
+   Matches are put through the same nameMatches() guard as geocoding, so a
+   rating can never be pinned to the wrong business.                          */
+
+async function ratePlace(row, key) {
+  const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': key,
+      'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.location'
+    },
+    body: JSON.stringify({
+      textQuery: [row.name, row.area, row.emirate, 'UAE'].filter(Boolean).join(', '),
+      locationBias: { circle: { center: { latitude: row.lat, longitude: row.lon }, radius: 2000 } },
+      maxResultCount: 3
+    })
+  });
+  if (!res.ok) throw new Error('places HTTP ' + res.status + ' ' + (await res.text()).slice(0, 140));
+  const body = await res.json();
+  for (const p of body.places || []) {
+    const label = (p.displayName && p.displayName.text) || '';
+    if (!nameMatches(row.name, label)) continue;        // same guard as geocoding
+    if (typeof p.rating !== 'number' || !p.userRatingCount) continue;
+    return { rating: Math.round(p.rating * 10) / 10, reviews: p.userRatingCount };
+  }
+  return null;
+}
+
+async function addRatings(rows) {
+  const key = process.env.GOOGLE_PLACES_API_KEY;
+  if (!key) {
+    console.log('· Google Places — skipped, GOOGLE_PLACES_API_KEY is not set (no ratings this run)');
+    return rows;
+  }
+  console.log('· Google Places — fetching ratings for ' + rows.length + ' places');
+  let rated = 0, unmatched = 0;
+  const today = new Date().toISOString().slice(0, 10);
+  for (const row of rows) {
+    try {
+      const hit = await ratePlace(row, key);
+      if (hit) {
+        row.rating = hit.rating;
+        row.reviews = hit.reviews;
+        row.ratingSrc = 'google';
+        row.ratingAt = today;
+        rated++;
+      } else {
+        unmatched++;
+      }
+    } catch (e) {
+      console.warn(`  ${row.name}: ${e.message}`);
+    }
+    await sleep(120);
+  }
+  console.log(`  ${rated} rated, ${unmatched} had no confident match`);
+  return rows;
+}
+
 /* ------------------------------------------------------------------- main */
 
 /* Sources spell the same venue differently — "Tap House" and "The Tap House",
@@ -452,6 +527,18 @@ function dedupe(rows) {
   rows = dedupe(rows).sort((a, b) =>
     a.emirate.localeCompare(b.emirate) || a.name.localeCompare(b.name));
 
+  /* Ratings-only run: enrich the committed dataset in place rather than
+     re-scraping everything just to refresh star counts. */
+  if (!rows.length && want('google') && fs.existsSync(OUT)) {
+    global.window = {};
+    delete require.cache[require.resolve(OUT)];
+    require(OUT);
+    rows = (global.window.MIBOWI_PLACES || {}).places || [];
+    console.log(`· Loaded ${rows.length} existing places to rate`);
+  }
+
+  if (want('google')) rows = await addRatings(rows);
+
   /* Ids must be unique across the whole file: the site keys records by id, and
      two branches of the same chain legitimately share a name. Deterministic,
      because the sort above is stable. */
@@ -471,7 +558,8 @@ function dedupe(rows) {
 
   console.log('\n  by category:', JSON.stringify(byCat));
   console.log('  by emirate: ', JSON.stringify(byEmirate));
-  console.log(`  total: ${rows.length}`);
+  console.log(`  total: ${rows.length}` +
+    `  (rated: ${rows.filter(r => typeof r.rating === 'number').length})`);
 
   if (DRY) { console.log('\n(dry run — nothing written)'); return; }
 
@@ -479,7 +567,8 @@ function dedupe(rows) {
     generated: new Date().toISOString().slice(0, 10),
     country: 'AE',
     categories: CATEGORIES,
-    counts: { total: rows.length, byCat, byEmirate },
+    counts: { total: rows.length, byCat, byEmirate,
+              rated: rows.filter(r => typeof r.rating === 'number').length },
     attribution: 'Place data © OpenStreetMap contributors, ODbL. Dog-friendly venue records carry their own source.',
     places: rows
   };

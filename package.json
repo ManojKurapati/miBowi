@@ -7,7 +7,8 @@
     "test": "node tests/site.test.js",
     "start": "python3 -m http.server 8000",
     "scrape": "node scripts/scrape-places.js",
-    "scrape:all": "node scripts/scrape-places.js --provider all"
+    "scrape:all": "node scripts/scrape-places.js --provider all",
+    "scrape:ratings": "node scripts/scrape-places.js --provider google"
   },
   "devDependencies": {
     "jsdom": "24.1.3"
