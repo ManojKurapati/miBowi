@@ -1,8 +1,23 @@
 # MiBoWi
 
+**Live: <https://manojkurapati.github.io/miBowi/>**
+
+[![Deploy](https://github.com/ManojKurapati/miBowi/actions/workflows/pages.yml/badge.svg)](https://github.com/ManojKurapati/miBowi/actions/workflows/pages.yml)
+
 A pet information space built around the three decisions that come *before* the animal.
 
 No build step, no framework, no back end. Open `index.html` and it runs.
+
+> **Note on the URL:** GitHub Pages paths are case-sensitive, so only
+> `/miBowi/` resolves — `/mibowi/` and `/MiBoWi/` both 404. Share the link by
+> copy-paste rather than dictation. Renaming the repo to all-lowercase would
+> make the address match what people naturally type.
+
+## Deployment
+
+Every push to `main` runs the full test suite and, only if it passes, publishes
+to GitHub Pages (`.github/workflows/pages.yml`). A commit that breaks the site
+cannot reach the live URL.
 
 ---
 
@@ -65,7 +80,7 @@ the matcher can offer to prefill from it.
 ## Layout
 
 ```
-index.html  readiness.html  cost.html  match.html  method.html
+index.html  readiness.html  cost.html  match.html  method.html  404.html
 assets/
   css/mibowi.css     design system — tokens, components, light + dark
   js/core.js         theme, nav, region/currency model, shared helpers
