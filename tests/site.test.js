@@ -2,7 +2,7 @@ const { JSDOM, ResourceLoader, VirtualConsole } = require('jsdom');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const ROOT = '/Users/klm/MiboWi';
+const ROOT = path.resolve(__dirname, '..');   // repo root, wherever it is checked out
 
 // Serve the site over http so pages get a real origin — file:// gives jsdom an
 // opaque origin where localStorage throws, which is not how a browser behaves.
