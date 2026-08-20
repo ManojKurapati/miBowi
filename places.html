@@ -52,7 +52,7 @@
     <div class="wrap">
       <p class="eyebrow reveal">Map &middot; United Arab Emirates</p>
       <h1 class="reveal" style="max-width:15ch">Where to take them in the UAE</h1>
-      <p class="lede reveal measure"><b id="places-total">0</b> vets, pet shops, groomers, dog parks and dog-friendly spots across the seven emirates &mdash; scraped from open data, not hand-typed, so it can be refreshed rather than rotting.</p>
+      <p class="lede reveal measure"><b id="places-total">0</b> vets, pet shops, groomers, dog parks and dog-friendly spots across the seven emirates. Filter by what you need, search by name or area, and tap any pin for directions.</p>
     </div>
   </section>
 
@@ -93,21 +93,6 @@
             <div class="place-list" id="place-list"></div>
           </div>
         </aside>
-      </div>
-
-      <div class="grid grid-2" style="margin-top:22px">
-        <div class="card">
-          <h4 style="margin-bottom:8px">Where this data comes from</h4>
-          <p class="small muted">Every pin is scraped from <b>OpenStreetMap</b> by <code style="font-size:.85em">scripts/scrape-places.js</code> and committed as a static file &mdash; nothing is scraped in your browser, and there is no server in the loop. Each pin links back to the exact OSM record it came from, so you can check it or correct it at source.</p>
-          <p class="small muted" style="margin-top:12px">Last refreshed <b id="places-generated">&mdash;</b>. Re-run <code style="font-size:.85em">npm run scrape</code> to pull the latest.</p>
-          <p class="tiny muted" style="margin-top:12px">Emirate labels are assigned by nearest population centre. UAE emirate borders have enclaves that this approximation will occasionally get wrong.</p>
-        </div>
-
-        <div class="card" style="background:var(--warn-soft);border-color:transparent">
-          <h4 style="margin-bottom:8px;color:var(--warn)">What is thin, and why</h4>
-          <p class="small" style="color:var(--ink-2)">OpenStreetMap covers UAE pet <em>services</em> well but barely tags dog-friendly <em>venues</em>: at the last run, exactly <b>six</b> cafes, parks or beaches in the whole country carried a <code style="font-size:.85em">dog=yes</code> tag. So this map is strong on vets and pet shops and weak on brunch.</p>
-          <p class="small" style="color:var(--ink-2);margin-top:12px">Closing that gap needs a different source, which is why the scraper ships with a second provider. See <a href="method.html#places">the method note</a>.</p>
-        </div>
       </div>
 
       <div class="note" style="margin-top:22px">

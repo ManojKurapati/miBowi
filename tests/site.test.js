@@ -445,7 +445,12 @@ async function testPlaces() {
   ok(d.querySelectorAll('#place-list .place').length === DATA.places.length, 'every place listed initially', d.querySelectorAll('#place-list .place').length);
   ok(d.querySelectorAll('.pin').length === DATA.places.length, 'a marker per place', d.querySelectorAll('.pin').length);
   ok(d.getElementById('places-total').textContent === String(DATA.counts.total), 'headline count filled in');
-  ok(d.getElementById('places-generated').textContent === DATA.generated, 'refresh date shown to the reader');
+  // Provenance copy was deliberately removed from this page, but the ODbL
+  // attribution is a licence condition and must survive — Leaflet renders it
+  // into the map's own attribution control.
+  ok(d.querySelector('.leaflet-control-attribution') !== null, 'map keeps its attribution control');
+  ok(/OpenStreetMap/.test(d.querySelector('.leaflet-control-attribution').innerHTML), 'OSM attribution still present on the map');
+  ok(!/scrape|Overpass|Firecrawl/i.test(d.querySelector('main').textContent), 'no scraper or provenance copy left on the page');
 
   // Filtering narrows both the list and the map
   const vets = DATA.places.filter(p => p.cat === 'vet').length;
